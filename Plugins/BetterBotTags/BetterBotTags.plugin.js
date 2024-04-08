@@ -3,7 +3,7 @@
 * @description Some improvements for bot tags, like the addition of webhook tags.
 * @author Qb
 * @authorId 133659541198864384
-* @version 2.0.1
+* @version 2.0.2
 * @invite gj7JFa6mF8
 * @source https://github.com/QbDesu/BetterDiscordAddons/blob/potato/Plugins/BetterBotTags
 * @updateUrl https://raw.githubusercontent.com/QbDesu/BetterDiscordAddons/potato/Plugins/BetterBotTags/BetterBotTags.plugin.js
@@ -21,14 +21,13 @@ module.exports = (() => {
     const config = {
         info: {
             name: "BetterBotTags",
-            version: "2.0.1",
+            version: "2.0.2",
             github_raw: "https://raw.githubusercontent.com/QbDesu/BetterDiscordAddons/potato/Plugins/BetterBotTags/BetterBotTags.plugin.js"
         },
         changelog: [
             {
                 title: 'Bug Fixes', types: 'fixed', items: [
-                    'Fixed missing padding in replies and compact display.',
-                    'Fixed surplus space when icons are disabled.',
+                    'Fixed the tags no longer showing up.',
                 ],
             },
         ],
@@ -89,7 +88,7 @@ module.exports = (() => {
                 };
 
                 
-                const MessageHeader = getModuleAndKey(Filters.byStrings(".message",".compact", ".author", ".showPopout"));
+                const MessageHeader = getModuleAndKey(Filters.byStrings("message","compact", "author", "showPopout", "decoration"));
                 const BotTag = getModuleAndKey(Filters.combine(Filters.byProps("Types"), Filters.byStrings(".BOT")));
 
                 const BotTagTypes = { 
@@ -239,7 +238,7 @@ module.exports = (() => {
                                 else if (this.isDefaultMessage(message)) type = this.isOfficial(message) ? BotTagTypes.OFFICIAL : BotTagTypes.SERVER;
                                 else if (this.isWebhook(message)) type = BotTagTypes.WEBHOOK;
                                 else if (user?.bot) type = BotTagTypes.BOT;
-                                else if (channel.isForumPost() && channel.ownerId === user.id && !isRepliedMessage) type = BotTagTypes.ORIGINAL_POSTER;
+                                else if (channel?.isForumPost() && channel.ownerId === user.id && !isRepliedMessage) type = BotTagTypes.ORIGINAL_POSTER;
                                 
                                 if (type==null) return;
                                 for (let key in decorations) {
@@ -270,6 +269,7 @@ module.exports = (() => {
 
                     onStart() {
                         if (!BotTag) return BdApi.showToast(`${config.info.name}: Failed to resolve BotTag Module`, { type: "error" });
+                        if (!MessageHeader) return BdApi.showToast(`${config.info.name}: Failed to resolve MessageHeader Module`, { type: "error" });
                         this.patch();
                     }
 
