@@ -161,7 +161,9 @@ module.exports = (() => {
                     })
                 );
 
-                const botTagClasses = getModule(Filters.byProps("botTag","botTagCozy"));
+                const botTagClassesTmp = getModule(Filters.byProps("botTag", "botTagCozy"));
+                const botTagClasses = botTagClassesTmp ?? getModule(Filters.byProps("botTag"));
+                if (botTagClasses && !botTagClasses.botTagCozy) botTagClasses.botTagCozy = getModule(Filters.byProps("botTagCozy"))?.botTagCozy;
                 const botTagVariantClasses = getModule(Filters.byProps("botTagRegular"));
 
                 const joinClassNames = (...classNames) => classNames.filter(Boolean).join(" ");
